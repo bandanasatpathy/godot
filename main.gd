@@ -1,6 +1,7 @@
 extends Node2D
 
 const TILE_SIZE = 32
+const GRID_SIZE = 20
 
 var direction = Vector2.RIGHT
 var move_timer = 0.0
@@ -8,6 +9,7 @@ const move_delay = 0.2
 
 var snake_body = []
 var snake_positions = []
+var score = 0
 
 func _process(delta) :
 	handle_input()
@@ -27,7 +29,11 @@ func handle_input():
 		direction = Vector2.RIGHT
 
 func _ready():
+	snake_positions.clear()
 	snake_positions.append($Snake/Head.position)
+	score = 0
+	update_score()
+	move_apple()
    
 func move_snake():
 	var next_position = snake_positions[0] + direction * TILE_SIZE
@@ -40,7 +46,7 @@ func move_snake():
 		or next_position.y >= 640
 	):
 		game_over()
-		return	
+		return
 	
 	# Self collision
 	if next_position in snake_positions:
@@ -54,7 +60,7 @@ func move_snake():
 	if next_position != $Apple.position:
 		snake_positions.pop_back()
 	else:
-		move_apple()
+		eat_apple()
 
 	update_snake_visuals()
 		
@@ -71,25 +77,29 @@ func update_snake_visuals():
 		$Snake.get_child(i).position = snake_positions[i]
 
 func eat_apple():
-	spawn_new_body_part()
+	score += 1
+	update_score()
 	move_apple()
 	
-func spawn_new_body_part():
-	var body_part = ColorRect.new()
-	body_part.size = Vector2(32,32)
-	body_part.color = Color.GREEN
-	body_part.position = snake_body[snake_body.size() - 1].position
-	
-	$Snake.add_child(body_part)
-	snake_body.append(body_part)
-	
 func move_apple():
-	var x = randi_range(0, 19) * TILE_SIZE
-	var y = randi_range(0, 19) * TILE_SIZE
-	$Apple.position = Vector2(x, y)
+	var new_position : Vector2
+	
+	while true:
+		var x = randi_range(0, GRID_SIZE-1) * TILE_SIZE
+		var y = randi_range(0, GRID_SIZE-1) * TILE_SIZE
+		new_position = Vector2(x, y)
+	
+		if new_position not in snake_positions:
+			break
+	
+	$Apple.position = new_position
 
+func update_score():
+	$ScoreLabel.text = "Score: " + str(score)
 	
 func game_over():
+	score = 0
+	update_score()
 	print("Game Over")
 	get_tree().reload_current_scene()
 	
