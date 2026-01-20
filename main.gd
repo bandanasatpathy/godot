@@ -1,11 +1,16 @@
 extends Node2D
 
 const TILE_SIZE = 32
-const GRID_SIZE = 20
+const GRID_SIZE = 19
+const BORDER_SIZE = 16
+const PLAY_AREA_START = Vector2(BORDER_SIZE,BORDER_SIZE)
+const PLAY_AREA_END = Vector2(BORDER_SIZE+(GRID_SIZE-1)* TILE_SIZE,
+BORDER_SIZE+(GRID_SIZE-1)* TILE_SIZE
+)
 
 var direction = Vector2.RIGHT
 var move_timer = 0.0
-const move_delay = 0.2
+var move_delay = 0.2
 
 var snake_body = []
 var snake_positions = []
@@ -29,6 +34,11 @@ func handle_input():
 		direction = Vector2.RIGHT
 
 func _ready():
+	
+	$Snake/Head.position = Vector2(
+		BORDER_SIZE + 5 * TILE_SIZE,
+		BORDER_SIZE + 5 * TILE_SIZE
+	)
 	snake_positions.clear()
 	snake_positions.append($Snake/Head.position)
 	score = 0
@@ -40,10 +50,10 @@ func move_snake():
 	
 	# Wall check
 	if (
-		next_position.x < 0
-		or next_position.y < 0
-		or next_position.x >= 640
-		or next_position.y >= 640
+	next_position.x < PLAY_AREA_START.x
+	or next_position.y < PLAY_AREA_START.y
+	or next_position.x > PLAY_AREA_END.x
+	or next_position.y >PLAY_AREA_END.y
 	):
 		game_over()
 		return
@@ -77,16 +87,20 @@ func update_snake_visuals():
 		$Snake.get_child(i).position = snake_positions[i]
 
 func eat_apple():
+	if move_delay > 0.05:	
+		move_delay -= 0/01
 	score += 1
 	update_score()
+	$EatSound.stop()
+	$EatSound.play()
 	move_apple()
 	
 func move_apple():
 	var new_position : Vector2
 	
 	while true:
-		var x = randi_range(0, GRID_SIZE-1) * TILE_SIZE
-		var y = randi_range(0, GRID_SIZE-1) * TILE_SIZE
+		var x = randi_range(0, GRID_SIZE-1) * TILE_SIZE + BORDER_SIZE
+		var y = randi_range(0, GRID_SIZE-1) * TILE_SIZE + BORDER_SIZE
 		new_position = Vector2(x, y)
 	
 		if new_position not in snake_positions:
@@ -98,9 +112,11 @@ func update_score():
 	$ScoreLabel.text = "Score: " + str(score)
 	
 func game_over():
+	$GameOverSound.play()
 	score = 0
 	update_score()
 	print("Game Over")
+	await get_tree().create_timer(0.6).timeout
 	get_tree().reload_current_scene()
 	
 	
