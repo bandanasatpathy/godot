@@ -1,52 +1,198 @@
-[gd_scene load_steps=4 format=3 uid="uid://6fk1wjoyh1e0"]
+[gd_scene load_steps=7 format=3 uid="uid://6fk1wjoyh1e0"]
 
 [ext_resource type="Script" uid="uid://dytvr5g7vn0ih" path="res://main.gd" id="1_ig7tw"]
 [ext_resource type="AudioStream" uid="uid://cxrl4nxjuifw1" path="res://sounds/eat_chomp.wav" id="2_h2yge"]
 [ext_resource type="AudioStream" uid="uid://b2ds3i3116dlx" path="res://sounds/game_over.wav" id="3_1bvp3"]
+[ext_resource type="Script" uid="uid://dl1bxmj27xgfw" path="res://start_screen.gd" id="4_7mycd"]
+[ext_resource type="Script" uid="uid://d1uap8qt8g706" path="res://pause_ui.gd" id="6_5vw27"]
+[ext_resource type="AudioStream" uid="uid://qgou6waj8kp3" path="res://sounds/snake_soft_chill.wav" id="6_7mycd"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_ig7tw")
 
-[node name="Border" type="ColorRect" parent="."]
+[node name="GameRoot" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -321.0
+offset_right = 319.0
+offset_bottom = 640.0
+grow_horizontal = 2
+
+[node name="Border" type="ColorRect" parent="GameRoot"]
+layout_mode = 0
 offset_right = 640.0
 offset_bottom = 640.0
 color = Color(1, 0.59607846, 0, 1)
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="GameRoot"]
 z_index = 1
+layout_mode = 0
 offset_left = 16.0
 offset_top = 16.0
 offset_right = 624.0
 offset_bottom = 624.0
 color = Color(0.16862746, 0.16862746, 0.16862746, 1)
 
-[node name="Snake" type="Node2D" parent="."]
-z_index = 2
+[node name="Snake" type="Node2D" parent="GameRoot"]
+z_index = 3
 
-[node name="Head" type="ColorRect" parent="Snake"]
+[node name="Head" type="ColorRect" parent="GameRoot/Snake"]
 offset_left = 32.0
 offset_top = 32.0
 offset_right = 64.0
 offset_bottom = 64.0
 color = Color(0, 1, 0, 1)
 
-[node name="Apple" type="ColorRect" parent="."]
-z_index = 2
+[node name="Apple" type="ColorRect" parent="GameRoot"]
+z_index = 3
+layout_mode = 0
 offset_left = 128.0
 offset_top = 128.0
 offset_right = 160.0
 offset_bottom = 160.0
 color = Color(1, 0, 0, 1)
 
-[node name="ScoreLabel" type="Label" parent="."]
-z_index = 3
-offset_left = 24.0
-offset_top = 8.0
-offset_right = 64.0
-offset_bottom = 36.0
+[node name="GameUI" type="Control" parent="GameRoot"]
+z_index = 10
+anchors_preset = 0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 624.0
+offset_bottom = 624.0
 
-[node name="EatSound" type="AudioStreamPlayer" parent="."]
+[node name="StartScreen" type="Control" parent="GameRoot/GameUI"]
+process_mode = 3
+z_index = 5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("4_7mycd")
+
+[node name="Panel" type="Panel" parent="GameRoot/GameUI/StartScreen"]
+modulate = Color(1, 1, 1, 0.8)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameRoot/GameUI/StartScreen/Panel"]
+custom_minimum_size = Vector2(300, 200)
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -151.5
+offset_top = -51.0
+offset_right = 151.5
+offset_bottom = 51.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="GameRoot/GameUI/StartScreen/Panel/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 48
+text = "SNAKE GAME"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="StartButton" type="Button" parent="GameRoot/GameUI/StartScreen/Panel/VBoxContainer"]
+layout_mode = 2
+text = "START"
+
+[node name="PauseUI" type="Control" parent="GameRoot/GameUI"]
+process_mode = 3
+visible = false
+z_index = 5
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("6_5vw27")
+
+[node name="Panel" type="Panel" parent="GameRoot/GameUI/PauseUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GameRoot/GameUI/PauseUI/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -81.0
+offset_top = -46.5
+offset_right = 81.0
+offset_bottom = 46.5
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="PauseLabel" type="Label" parent="GameRoot/GameUI/PauseUI/Panel/VBoxContainer"]
+process_mode = 3
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 42
+text = "PAUSED"
+
+[node name="ResumeButton" type="Button" parent="GameRoot/GameUI/PauseUI/Panel/VBoxContainer"]
+layout_mode = 2
+text = "RESUME"
+
+[node name="ScoreLabel" type="Label" parent="GameRoot/GameUI"]
+z_index = 4
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 10.0
+offset_bottom = 33.0
+grow_horizontal = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="EatSound" type="AudioStreamPlayer" parent="GameRoot"]
 stream = ExtResource("2_h2yge")
 
-[node name="GameOverSound" type="AudioStreamPlayer" parent="."]
+[node name="GameOverSound" type="AudioStreamPlayer" parent="GameRoot"]
 stream = ExtResource("3_1bvp3")
+
+[node name="GameMusic" type="AudioStreamPlayer" parent="GameRoot"]
+stream = ExtResource("6_7mycd")
+
+[node name="DividerLine" type="ColorRect" parent="GameRoot"]
+z_index = 2
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+color = Color(0.6440042, 0.67442966, 0.27831012, 1)
+
+[connection signal="pressed" from="GameRoot/GameUI/StartScreen/Panel/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="GameRoot/GameUI/PauseUI/Panel/VBoxContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
